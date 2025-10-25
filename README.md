@@ -1,3 +1,4 @@
+
 # CMS Lab 2
 
 Proyecto CMS para Segundo Parcial de Laboratorio II 🧠✨
@@ -10,4 +11,7 @@ Este sistema permite:
 - Borrado lógico
 - Visualización de publicaciones públicas
 
-Desarrollado en PHP con Bootstrap y MySQL.
+Desarrollado en PHP con Bootstrap y MySQL
+# cms-lab2
+Proyecto CMS para Segundo Parcial de Laboratorio II
+
