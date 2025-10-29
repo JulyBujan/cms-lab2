@@ -24,10 +24,8 @@ if (isset($_FILES["imagen"]) && $_FILES["imagen"]["error"] == 0) {
     $nombre_imagen = uniqid("img_") . "." . $ext;
     $ruta_destino = "../img/" . $nombre_imagen;
 
-    if (move_uploaded_file($tmp_name, $ruta_destino)) {
-        echo "✅ Imagen subida correctamente a: $ruta_destino";
-    } else {
-        echo "❌ Error al mover la imagen 😢";
+    if (!move_uploaded_file($tmp_name, $ruta_destino)) {
+        die("Error al subir la imagen. Verifique los permisos de la carpeta 'img'.");
     }
 }
 
@@ -38,10 +36,12 @@ if (isset($_FILES["imagen"]) && $_FILES["imagen"]["error"] == 0) {
             VALUES ('$id_usuario', '$titulo', '$contenido', '$nombre_imagen')";
 
     if (mysqli_query($conn, $sql)) {
-        header("Location: ../home.php");
+        header("Location: /home.php");
         exit;
     } else {
-        echo "Error al guardar publicación: " . mysqli_error($conn);
+        // En lugar de un 'echo', es mejor manejar el error de otra forma.
+        // Por ahora, morimos para evitar el error de headers.
+        die("Error al guardar la publicación: " . mysqli_error($conn));
     }
 }
 ?>
