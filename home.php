@@ -14,18 +14,22 @@ $nombre     = $_SESSION["nombre"];
 $solo_mias = isset($_GET["mis"]) && $_GET["mis"] == 1;
 
 if ($solo_mias) {
-    $sql = "SELECT p.*, u.nombre AS autor FROM publicaciones p
+    $sql = "SELECT p.id, p.id_usuario, p.titulo, p.contenido, p.imagen, p.fecha, u.nombre AS autor FROM publicaciones p
             JOIN usuarios u ON p.id_usuario = u.id
-            WHERE p.estado = 1 AND p.id_usuario = '$id_usuario'
+            WHERE p.estado = 1 AND p.id_usuario = ?
             ORDER BY p.fecha DESC";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "i", $id_usuario);
 } else {
-    $sql = "SELECT p.*, u.nombre AS autor FROM publicaciones p
+    $sql = "SELECT p.id, p.id_usuario, p.titulo, p.contenido, p.imagen, p.fecha, u.nombre AS autor FROM publicaciones p
             JOIN usuarios u ON p.id_usuario = u.id
             WHERE p.estado = 1
             ORDER BY p.fecha DESC";
+    $stmt = mysqli_prepare($conn, $sql);
 }
 
-$resultado = mysqli_query($conn, $sql);
+mysqli_stmt_execute($stmt);
+$resultado = mysqli_stmt_get_result($stmt);
 ?>
 
 <!DOCTYPE html>
@@ -37,17 +41,35 @@ $resultado = mysqli_query($conn, $sql);
 </head>
 <body>
 
+<div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3">
+  <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+      <strong class="me-auto">Notificación</strong>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+      <!-- El mensaje del toast se inyectará aquí -->
+    </div>
+  </div>
+</div>
+
 <div class="container mt-4">
     <h2>Bienvenido/a, <?php echo htmlspecialchars($nombre); ?> 👋</h2>
 
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
-            <a href="nueva.php" class="btn btn-success">+ Nueva publicación</a>
+            <?php if (isset($_SESSION["role"]) && $_SESSION["role"] != 1): // Ocultar para rol Invitado ?>
+                <a href="nueva.php" class="btn btn-success">+ Nueva publicación</a>
+    
+                <?php if ($solo_mias): ?>
+                    <a href="home.php" class="btn btn-secondary">Ver todas</a>
+                <?php else: ?>
+                    <a href="home.php?mis=1" class="btn btn-warning">Mis publicaciones</a>
+                <?php endif; ?>
+            <?php endif; ?>
 
-            <?php if ($solo_mias): ?>
-                <a href="home.php" class="btn btn-secondary">Ver todas</a>
-            <?php else: ?>
-                <a href="home.php?mis=1" class="btn btn-warning">Mis publicaciones</a>
+            <?php if (isset($_SESSION["role"]) && $_SESSION["role"] == 2): ?>
+                <a href="gestion_usuarios.php" class="btn btn-info">Gestionar Usuarios</a>
             <?php endif; ?>
         </div>
         <a href="logout.php" class="btn btn-danger">Cerrar sesión</a>
@@ -69,14 +91,19 @@ $resultado = mysqli_query($conn, $sql);
 
                 <p class="card-text"><small class="text-muted">Publicado por <?php echo htmlspecialchars($pub["autor"]); ?> el <?php echo $pub["fecha"]; ?></small></p>
 
-                <?php if ($pub["id_usuario"] == $id_usuario): ?>
+                <?php // El usuario puede editar/eliminar si es el dueño Y NO es un invitado.
+                if (isset($_SESSION["role"]) && $_SESSION["role"] != 1 && $pub["id_usuario"] == $id_usuario): ?>
                     <a href="editar.php?id=<?php echo $pub["id"]; ?>" class="btn btn-sm btn-warning">Editar</a>
-                    <a href="php/borrar_publicacion.php?id=<?php echo $pub["id"]; ?>" class="btn btn-sm btn-outline-danger">Eliminar</a>
+                    <a href="php/borrar_publicacion.php?id=<?php echo $pub["id"]; ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Estás seguro de que quieres eliminar esta publicación?');">Eliminar</a>
                 <?php endif; ?>
             </div>
         </div>
     <?php endwhile; ?>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Nuestro manejador de toasts centralizado -->
+<script src="js/toast_handler.js"></script>
 
 </body>
 </html>

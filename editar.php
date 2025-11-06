@@ -1,25 +1,27 @@
 <?php
-session_start();
+include_once "php/seguridad.php";
 include_once "php/conexion.php";
 
-if (!isset($_SESSION["id_usuario"])) {
-    header("Location: login.php");
-    exit;
-}
+// Los invitados (rol 1) no pueden editar.
+denegar_rol(1);
 
 $id_usuario = $_SESSION["id_usuario"];
 $id = $_GET["id"] ?? null;
 
-// Buscar publicación
-$sql = "SELECT * FROM publicaciones WHERE id = '$id' AND id_usuario = '$id_usuario' AND estado = 1";
-$res = mysqli_query($conn, $sql);
+// Buscar publicación de forma segura
+$sql = "SELECT id, titulo, contenido, imagen FROM publicaciones WHERE id = ? AND id_usuario = ? AND estado = 1";
+$stmt = mysqli_prepare($conn, $sql);
+mysqli_stmt_bind_param($stmt, "ii", $id, $id_usuario);
+mysqli_stmt_execute($stmt);
+$res = mysqli_stmt_get_result($stmt);
 
 if (mysqli_num_rows($res) != 1) {
-    echo "Publicación no encontrada o no autorizada.";
-    exit;
+    // Redirigir a home si la publicación no existe o no pertenece al usuario.
+    header("Location: home.php?error=unauthorized");
 }
 
 $pub = mysqli_fetch_assoc($res);
+mysqli_stmt_close($stmt);
 ?>
 
 <!DOCTYPE html>

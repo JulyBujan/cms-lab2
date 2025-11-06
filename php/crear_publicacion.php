@@ -9,11 +9,8 @@ if (!isset($_SESSION["id_usuario"])) {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_usuario = $_SESSION["id_usuario"];
-    $titulo     = mysqli_real_escape_string($conn, $_POST["titulo"]);
-    $contenido_bruto = $_POST["contenido"];
-    $contenido_limpio = strip_tags($contenido_bruto, "<p><br><strong><em><ul><ol><li>");
-    $contenido = mysqli_real_escape_string($conn, $contenido_limpio);
-
+    $titulo     = $_POST["titulo"];
+    $contenido  = $_POST["contenido"]; // No es necesario escapar ni limpiar aquí.
 
 // Procesar imagen si se cargó
 $nombre_imagen = "";
@@ -29,19 +26,20 @@ if (isset($_FILES["imagen"]) && $_FILES["imagen"]["error"] == 0) {
     }
 }
 
+    // Insertar en la base de datos de forma segura
+    $sql = "INSERT INTO publicaciones (id_usuario, titulo, contenido, imagen) VALUES (?, ?, ?, ?)";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "isss", $id_usuario, $titulo, $contenido, $nombre_imagen);
 
-
-    // Insertar en la base
-    $sql = "INSERT INTO publicaciones (id_usuario, titulo, contenido, imagen)
-            VALUES ('$id_usuario', '$titulo', '$contenido', '$nombre_imagen')";
-
-    if (mysqli_query($conn, $sql)) {
+    if (mysqli_stmt_execute($stmt)) {
         header("Location: /home.php");
         exit;
     } else {
-        // En lugar de un 'echo', es mejor manejar el error de otra forma.
-        // Por ahora, morimos para evitar el error de headers.
-        die("Error al guardar la publicación: " . mysqli_error($conn));
+        // Error: Registrar el fallo y redirigir con un mensaje amigable.
+        // error_log("Error al crear publicación: " . mysqli_error($conn)); // Descomentar en un servidor de producción
+        header("Location: ../nueva.php?error=db_error");
+        exit;
     }
+    mysqli_stmt_close($stmt);
 }
 ?>

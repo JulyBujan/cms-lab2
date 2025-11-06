@@ -28,6 +28,17 @@ if (!isset($_SESSION["id_usuario"])) {
 </head>
 <body>
 
+<div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3">
+  <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header text-bg-danger">
+      <strong class="me-auto">Error de validación</strong>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+      Por favor, escribí contenido para tu publicación.
+    </div>
+  </div>
+</div>
 <div class="container mt-4">
     <h2>Nueva publicación</h2>
 
@@ -53,12 +64,15 @@ if (!isset($_SESSION["id_usuario"])) {
     </form>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 document.querySelector("form").addEventListener("submit", function(e) {
     const contenido = tinyMCE.get("contenido").getContent({format: "text"}).trim();
     if (contenido === "") {
-        alert("Por favor, escribí contenido para tu publicación.");
         e.preventDefault();
+        const toastLiveExample = document.getElementById('liveToast');
+        const toast = new bootstrap.Toast(toastLiveExample);
+        toast.show();
     }
 });
 </script>

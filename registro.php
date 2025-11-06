@@ -9,6 +9,18 @@
 </head>
 <body class="d-flex justify-content-center align-items-center vh-100 bg-light">
 
+  <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3">
+    <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-header">
+        <strong class="me-auto">Notificación</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body">
+        <!-- El mensaje del toast se inyectará aquí -->
+      </div>
+    </div>
+  </div>
+
   <div class="card p-4 shadow" style="width: 100%; max-width: 400px;">
     <h2 class="mb-4 text-center">Crear cuenta</h2>
     
@@ -35,7 +47,14 @@
     <p class="mt-3 text-center">
       ¿Ya tenés cuenta? <a href="login.php">Iniciá sesión</a>
     </p>
+    <div class="text-center mt-2">
+        <a href="index.php" class="btn btn-sm btn-outline-secondary">← Volver al inicio</a>
+    </div>
   </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Nuestro manejador de toasts centralizado -->
+  <script src="js/toast_handler.js"></script>
 
 </body>
 </html>
