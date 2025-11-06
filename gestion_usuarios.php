@@ -51,6 +51,7 @@ $estados = [
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2>Gestión de Usuarios</h2>
         <a href="home.php" class="btn btn-secondary">Volver al Inicio</a>
+    </div>
 
     <div class="table-responsive">
         <table class="table table-striped table-hover">
