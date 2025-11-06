@@ -16,7 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         // Mensajes de éxito
         'success': {
-            'true': { message: 'Usuario actualizado correctamente.', class: 'text-bg-success' }
+            'true': { message: 'Usuario actualizado correctamente.', class: 'text-bg-success' },
+            'updated': { message: 'Publicación actualizada correctamente.', class: 'text-bg-success' }
         },
         // Mensajes de registro
         'registro': {

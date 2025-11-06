@@ -70,6 +70,7 @@ $resultado = mysqli_stmt_get_result($stmt);
 
             <?php if (isset($_SESSION["role"]) && $_SESSION["role"] == 2): ?>
                 <a href="gestion_usuarios.php" class="btn btn-info">Gestionar Usuarios</a>
+                <a href="gestion_publicaciones.php" class="btn btn-secondary">Gestionar Publicaciones</a>
             <?php endif; ?>
         </div>
         <a href="logout.php" class="btn btn-danger">Cerrar sesión</a>
