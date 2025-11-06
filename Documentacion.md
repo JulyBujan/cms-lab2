@@ -42,6 +42,8 @@ Permitir a los usuarios registrar publicaciones con imágenes y descripciones, y
 - usuarios (id, nombre, email, contrasena, estado, rol) 
 - publicaciones (id, titulo, descripcion, imagen, usuario_id, habilitado, fecha_creacion) 
 
+![Diagrama de Entidad-Relación](sql/cms.png)
+
 ## 9. Detalles funcionales 
 - Al registrarse, el usuario es derivado a login.php. 
 - Las publicaciones se muestran en home.php si habilitado = 1. 
